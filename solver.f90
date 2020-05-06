@@ -106,8 +106,6 @@ module Solver
             real(dp), dimension(:,:), intent(out) :: f
             integer                               :: i, j
 
-            ! Think about vectorization
-            ! point loads => call apply_poit_load()
             if (size(force) /= 0) then 
                 do i = 1, size(force, 1)
                     j = int(force(i, 1))
@@ -120,30 +118,30 @@ module Solver
 
         end subroutine force_assembler
 
-        subroutine disp_imposer(disp, k, f)
-            real(dp), dimension(:,:), intent(in)    :: disp
-            real(dp), dimension(:,:), intent(inout) :: k, f
-            integer                                 :: i, j, constraint_x, constraint_y
-            real(dp), parameter                     :: penaltyFactor = 1.0e20
-            real(dp)                                :: dx, dy
+        ! subroutine disp_imposer(disp, k, f)
+        !     real(dp), dimension(:,:), intent(in)    :: disp
+        !     real(dp), dimension(:,:), intent(inout) :: k, f
+        !     integer                                 :: i, j, constraint_x, constraint_y
+        !     real(dp), parameter                     :: penaltyFactor = 1.0e20
+        !     real(dp)                                :: dx, dy
 
-            do i = 1, size(disp, 1)
-                j = int(disp(i, 1))
-                dx = disp(i, 2)
-                dy = disp(i, 3)
-                constraint_x = int(disp(i, 4))
-                constraint_y = int(disp(i, 5))
+        !     do i = 1, size(disp, 1)
+        !         j = int(disp(i, 1))
+        !         dx = disp(i, 2)
+        !         dy = disp(i, 3)
+        !         constraint_x = int(disp(i, 4))
+        !         constraint_y = int(disp(i, 5))
 
-                if (constraint_x == 1) then
-                    k(dofsPerNode*j - 1, dofsPerNode*j - 1) = k(dofsPerNode*j - 1, dofsPerNode*j - 1) * penaltyFactor
-                    f(dofsPerNode*j - 1, 1) = k(dofsPerNode*j - 1, 2*j - 1) * dx
-                end if
+        !         if (constraint_x == 1) then
+        !             k(dofsPerNode*j - 1, dofsPerNode*j - 1) = k(dofsPerNode*j - 1, dofsPerNode*j - 1) * penaltyFactor
+        !             f(dofsPerNode*j - 1, 1) = k(dofsPerNode*j - 1, 2*j - 1) * dx
+        !         end if
                 
-                if (constraint_y == 1) then
-                    k(dofsPerNode*j, dofsPerNode*j) = k(dofsPerNode*j, dofsPerNode*j) * penaltyFactor
-                    f(dofsPerNode*j, 1) = k(dofsPerNode*j, dofsPerNode*j) * dy
-                end if
-            end do
+        !         if (constraint_y == 1) then
+        !             k(dofsPerNode*j, dofsPerNode*j) = k(dofsPerNode*j, dofsPerNode*j) * penaltyFactor
+        !             f(dofsPerNode*j, 1) = k(dofsPerNode*j, dofsPerNode*j) * dy
+        !         end if
+        !     end do
 
         end subroutine disp_imposer
 
