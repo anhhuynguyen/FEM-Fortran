@@ -102,13 +102,13 @@ module Solver
         end subroutine stiffness_assembler
 
         subroutine force_assembler(force, f)
-            real(dp), dimension(:,:), intent(in)  :: force
-            real(dp), dimension(:,:), intent(out) :: f
-            integer                               :: i, j
+            real(dp), dimension(:,:), allocatable, intent(in)  :: force
+            real(dp), dimension(:,:), intent(out)              :: f
+            integer                                            :: i, j
 
             ! Think about vectorization
             ! point loads => call apply_poit_load()
-            if (size(force) /= 0) then 
+            if (allocated(force)) then 
                 do i = 1, size(force, 1)
                     j = int(force(i, 1))
                     f(dofsPerNode*j - 1, 1) = f(dofsPerNode*j - 1, 1) + force(i, 2)
