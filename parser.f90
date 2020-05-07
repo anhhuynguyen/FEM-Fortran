@@ -8,7 +8,7 @@ module Parser
         subroutine read_input(inputFile, nodes, elements, mat, cload, boundary)
 
             character(len=*), intent(in)                         :: inputFile
-            real(dp), dimension(:), intent(out)                  :: mat
+            real(dp), dimension(:), allocatable, intent(out)     :: mat
             real(dp), dimension(:,:), allocatable, intent(out)   :: nodes, cload, boundary ! add pload for pressure
             integer, dimension(:,:), allocatable, intent(out)    :: elements
             integer                                              :: numberOfNodes, numberOfElements, nodesPerElement, &
@@ -51,7 +51,11 @@ module Parser
                         end if
 
                     else if (keyword == "*MATERIALS") then
-                        read(1,*) matType, mat(:)
+                        read(1,*) matType
+                        if (matType == "Elastic") then 
+                            allocate(mat(2), stat=msg)
+                            read(1,*) mat(:)
+                        end if
 
                     else if (keyword == "*BOUNDARY") then
                         allocate(boundary(constrainedNodes, 5), stat=msg)
@@ -81,6 +85,19 @@ module Parser
             close(1)
 
         end subroutine read_input
+
+        subroutine check_input(nodes, elements, mat, disp_bc)
+            integer, dimension(:,:), allocatable, intent(in)  :: elements
+            real(dp), dimension(:,:), allocatable, intent(in) :: nodes, disp_bc
+            real(dp), dimension(:), allocatable, intent(in)   :: mat
+
+            if (.not. allocated(elements) .or. .not. allocated(nodes) .or. &
+                .not. allocated(mat) .or. .not. allocated(disp_bc)) then 
+                    print*, "Something not allocated"
+                call exit() 
+            end if
+
+        end subroutine check_input
 
         subroutine write2file(nodes, u, sigma, eps, inputFile, outputFile)
             real(dp), dimension(:,:), intent(in) :: u, sigma, eps, nodes

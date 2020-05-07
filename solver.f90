@@ -215,13 +215,14 @@ module Solver
             character(len=*), intent(in)          :: inputfile, outputfile
             real(dp), dimension(:,:), allocatable :: nodes, force_bc, disp_bc
             integer, dimension(:,:), allocatable  :: elements
-            real(dp), dimension(dim)              :: mat
+            real(dp), dimension(:), allocatable :: mat
             real(dp), dimension(dim+1,dim+1)      :: c
             real(dp), dimension(:,:), allocatable :: k, f, stress, strain
             integer, dimension(:), allocatable    :: ipiv
             integer                               :: info
 
             call read_input(inputfile, nodes, elements, mat, force_bc, disp_bc)
+            call check_input(nodes, elements, mat, disp_bc)
             call initialize(nodes, elements, k, f, ipiv)
             call linear_elasticity(mat, c)
             call stiffness_assembler(elements, nodes, c, k)
@@ -229,7 +230,7 @@ module Solver
             call disp_imposer(disp_bc, k, f)
             call dgesv(numberOfDofs, 1, k, numberOfDofs, ipiv, f, numberOfDofs, info)
             call stiffness_destructor(k)
-            call get_stress(elements, nodes, 3, f, c, strain, stress)
+            call get_stress(elements, nodes, 1, f, c, strain, stress)
             call write2file(nodes, f, stress, strain, inputfile, outputfile)
 
         end subroutine solve

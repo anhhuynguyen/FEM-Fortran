@@ -8,7 +8,8 @@
 *ELEMENT
 1 2 3 4
 *MATERIALS
-Elastic, 1.0e6, 0.3
+Elastic
+1.0e6, 0.3
 *BOUNDARY
 1, 0, 0, 1, 1
 2, 0, 0, 1, 1
