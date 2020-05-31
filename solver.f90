@@ -23,9 +23,9 @@ module Solver
             numberOfDofs = numberOfNodes * dofsPerNode
 
             if (nodesPerElement == 4) then
-                eltType = "QUAD4"
+                eltType = "Q4"
             else if (nodesPerElement == 8) then
-                eltType = "QUAD8"
+                eltType = "Q8"
             end if
 
             allocate(k(numberOfDofs, numberOfDofs), STAT=k_msg)
@@ -82,9 +82,9 @@ module Solver
             integer, dimension(dofsPerElt)              :: dofs
             integer :: i, m, n, nip
 
-            if (eltType == "QUAD4") then
+            if (eltType == "Q4") then
                 nip = 2
-            else if (eltType == "QUAD8") then
+            else if (eltType == "Q8") then
                 nip = 3
             end if 
             
